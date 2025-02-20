@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        p,
+        h1,
+        h2 {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #222;
+
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header {
+            color: hsla(0, 24%, 34%, 1);
+            padding: 0 1rem;
+            text-align: center;
+            font-size: 3.5rem;
+            line-height: 0.5;
+            cursor: default;
+            transition: color 200ms ease;
+        }
+
+        header:hover {
+            color: hsla(0, 34%, 38%, 1);
+        }
+
+        header h1 {
+            font-weight: 900;
+        }
+
+        main {
+            max-width: 90vw;
+            padding: 2rem;
+            color: #eee;
+            text-align: center;
+        }
+
+        main h2 {
+            line-height: 1.8;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            color: #606060;
+            cursor: pointer;
+            transition: color 200ms ease;
+        }
+
+        footer:hover {
+            color: #808080;
+        }
+
+        footer:hover strong {
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>{{dotdev::error.statusCode}}</h1>
+    </header>
+
+    <main>
+        <h2>{{dotdev::error.message}}</h2>
+        <p>{{dotdev::error.description}}</p>
+    </main>
+
+    <footer>
+        <p><strong>dotdev</strong> {{dotdev::version}}</p>
+    </footer>
+</body>
+
+</html>

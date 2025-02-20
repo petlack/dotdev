@@ -1,0 +1,59 @@
+name: APK Package
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Environment
+        run: |
+          apk add --no-cache alpine-sdk go git sudo
+          adduser -G abuild -g "Alpine Package Builder" -s /bin/ash -D builder
+          echo "builder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+          mkdir -p /home/builder/.abuild
+          chown builder:abuild /home/builder/.abuild
+      - name: Generate abuild keys
+        run: |
+          su -c "abuild-keygen -a -i -n" builder
+      - name: Prepare tarball
+        run: |
+          cd "${GITHUB_WORKSPACE}"
+          tar -czf .pkgs/alpine/dotdev-$(cat version.txt).tar.gz \
+              --transform "s,^,dotdev-$(cat version.txt)/," \
+              *.go go.mod version.txt assets
+      - name: Build Package
+        run: |
+          cp -r ${GITHUB_WORKSPACE}/.pkgs/alpine/* /home/builder/
+          chown builder:abuild /home/builder/APKBUILD
+          cd /home/builder
+          su -c "abuild checksum && abuild -r" builder
+          apk_path=$(find /home/builder/packages/home/x86_64/ -type f -name "*.apk" | head -n1)
+          echo "APK_PATH=$apk_path" >> $GITHUB_ENV
+          echo "APK_NAME=$(basename $apk_path)" >> $GITHUB_ENV
+          pubkey_path=$(find /home/builder/.abuild -type f -name "*.pub" | head -n1)
+          echo "PUB_KEY_PATH=$pubkey_path" >> $GITHUB_ENV
+          echo "PUB_KEY_NAME=$(basename $apk_path).rsa.pub" >> $GITHUB_ENV
+      - name: Upload APK to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.APK_PATH }}
+          asset_name: ${{ env.APK_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: Upload public key to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.PUB_KEY_PATH }}
+          asset_name: ${{ env.PUB_KEY_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+permissions:
+  contents: write

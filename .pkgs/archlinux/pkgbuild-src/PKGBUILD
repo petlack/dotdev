@@ -1,0 +1,27 @@
+pkgname=dotdev
+pkgver=0.0.1.20250222.02
+pkgrel=1
+pkgdesc="Command-line tool for managing Time-based One-Time Passwords (TOTPs)"
+arch=('i686' 'x86_64')
+url="https://github.com/petlack/$pkgname"
+license=('GPL-3.0-or-later')
+depends=()
+makedepends=('git' 'go')
+provides=("$pkgname")
+conflicts=("$pkgname")
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=("SKIP")
+
+build() {
+	CGO_ENABLED=0 \
+		GOOS=linux \
+		go build -a \
+		-ldflags="-s -w" \
+		-installsuffix cgo \
+		-o build/$pkgname \
+		.
+}
+
+package() {
+	install -Dm755 build/$pkgname "$pkgdir/usr/bin/$pkgname"
+}

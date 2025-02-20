@@ -1,0 +1,43 @@
+name: ALPM Package
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: |
+          pacman -Syu --noconfirm git
+      - name: Prepare tarball
+        run: |
+          tar -czf .pkgs/archlinux/pkgbuild-src/dotdev-$(cat version.txt).tar.gz *.go go.mod version.txt assets
+      - name: Prepare Environment
+        run: |
+          useradd -m builduser
+          passwd -d builduser
+          printf 'builduser ALL=(ALL) ALL\n' | tee -a /etc/sudoers
+          chown -R builduser:builduser .
+      - name: Build package
+        id: build_package
+        run: |
+          version=$(cat version.txt)
+          sudo -u builduser bash -c "makepkg -s --clean --noconfirm --dir .pkgs/archlinux/pkgbuild-src"
+          file=$(find .pkgs/archlinux/pkgbuild-src -type f -name "dotdev-$version-*.pkg.tar.zst" | head -n1)
+          echo "PACKAGE_PATH=$file" >> $GITHUB_OUTPUT
+          echo "PACKAGE_NAME=$(basename $file)" >> $GITHUB_OUTPUT
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.build_package.outputs.PACKAGE_PATH }}
+          asset_name: ${{ steps.build_package.outputs.PACKAGE_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+permissions:
+  contents: write

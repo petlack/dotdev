@@ -1,0 +1,29 @@
+# Contributor: Peter Laca <peter@laca.me>
+# Maintainer: Peter Laca <peter@laca.me>
+pkgname=dotdev
+pkgver=0.0.1.20250222.02
+pkgrel=1
+pkgdesc="Command-line tool for managing Time-based One-Time Passwords (TOTPs)"
+url="https://github.com/petlack/$pkgname"
+arch="x86_64"
+license="GPL-3.0-or-later"
+depends=""
+makedepends="go git"
+source="$pkgname-$pkgver.tar.gz"
+builddir="$srcdir/$pkgname-$pkgver"
+
+build() {
+	cd "$builddir" || exit
+	CGO_ENABLED=0 GOOS=linux go build -a -ldflags="-s -w" -installsuffix cgo -o build/$pkgname .
+}
+
+package() {
+	install -Dm755 build/$pkgname "$pkgdir/usr/bin/$pkgname"
+}
+
+check() {
+	cd "$builddir" || exit
+	go test ./...
+}
+
+sha512sums="SKIP"

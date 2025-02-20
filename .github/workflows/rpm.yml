@@ -1,0 +1,49 @@
+name: RPM Package
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:41
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install build tools and dependencies
+        run: |
+          dnf install -y git rpm-build sudo golang
+      - name: Setup environment
+        run: |
+          mkdir -p ${GITHUB_WORKSPACE}/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+      - name: Copy necessary files to the build environment
+        run: |
+          cp -r *.go go.mod version.txt assets ${GITHUB_WORKSPACE}/rpmbuild/SOURCES/
+          cp .pkgs/rpm/SPECS/*.spec ${GITHUB_WORKSPACE}/rpmbuild/SPECS/
+      - name: Build the source tarball
+        run: |
+          cd ${GITHUB_WORKSPACE}/rpmbuild/SOURCES
+          tar -czf dotdev-$(cat version.txt).tar.gz --transform "s,^,dotdev-$(cat version.txt)/," *.go go.mod version.txt assets
+      - name: Build RPM Package
+        run: |
+          cd ${GITHUB_WORKSPACE}/rpmbuild
+          rpmbuild -ba \
+            --define "_topdir ${GITHUB_WORKSPACE}/rpmbuild" \
+            --define "_sourcedir ${GITHUB_WORKSPACE}/rpmbuild/SOURCES" \
+            SPECS/*.spec
+      - name: Setup artifact path
+        run: |
+          rpm_path=$(find ${GITHUB_WORKSPACE}/rpmbuild/RPMS -type f -name "*.rpm" | head -n1)
+          echo "RPM_PATH=$rpm_path" >> $GITHUB_ENV
+          echo "RPM_NAME=$(basename $rpm_path)" >> $GITHUB_ENV
+      - name: Upload RPM to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.RPM_PATH }}
+          asset_name: ${{ env.RPM_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+permissions:
+  contents: write

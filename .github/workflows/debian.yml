@@ -1,0 +1,48 @@
+name: DEB Package
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm-slim
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Debian Packaging Tools
+        run: |
+          apt-get update
+          apt-get install -y build-essential dpkg-dev debhelper devscripts
+          echo "deb http://deb.debian.org/debian bookworm-backports main" > /etc/apt/sources.list.d/backports.list
+          apt-get update
+          apt-get -t bookworm-backports install -y golang-go
+          go version
+      - name: Copy debian package files
+        run: cp -R .pkgs/debian .
+      - name: Update Changelog and Version
+        run: |
+          dch -v "$(cat version.txt)-1" "Automated build of $(cat version.txt)-1 on Github Actions."
+      - name: Build Debian Package
+        run: |
+          dpkg-buildpackage -us -uc -ui -b
+      - name: Prepare Debian Package
+        id: prepare_packages
+        run: |
+          mv ../*.deb .
+          file=$(find . -type f -name '*.deb' | head -n1)
+          echo "PACKAGE_PATH=$file" >> $GITHUB_OUTPUT
+          echo "PACKAGE_NAME=$(basename $file)" >> $GITHUB_OUTPUT
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.prepare_packages.outputs.PACKAGE_PATH }}
+          asset_name: ${{ steps.prepare_packages.outputs.PACKAGE_NAME }}
+          tag: ${{ github.ref }}
+          overwrite: true
+permissions:
+  contents: write
