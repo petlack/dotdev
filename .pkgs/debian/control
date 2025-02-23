@@ -9,4 +9,4 @@ Homepage: https://github.com/dotdev/dotdev
 Package: dotdev
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Command-line tool for managing Time-based One-Time Passwords (TOTPs).
+Description: Lightweight Web server for static HTML with built-in live reload written in Go.

@@ -1,7 +1,7 @@
 Name:           dotdev
 Version:        0.0.1.20250223.01
 Release:        1%{?dist}
-Summary:        Command-line tool for managing Time-based One-Time Passwords (TOTPs)
+Summary:        Lightweight Web server for static HTML with built-in live reload written in Go.
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/petlack/dotdev
