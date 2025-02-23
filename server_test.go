@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -29,8 +30,8 @@ func TestLiveReload(t *testing.T) {
 		t.Fatalf("Failed to write file: %v", err)
 	}
 
-	srvFS := os.DirFS(tmpDir)
-	handler := DevServer(srvFS, "index.html")
+	indexPath := path.Join(tmpDir, "index.html")
+	handler := DevServer(indexPath)
 	go StartFileWatcher(filePath)
 	ts := httptest.NewServer(handler)
 	defer ts.Close()

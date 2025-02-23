@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -13,7 +14,6 @@ import (
 var assetsFs embed.FS
 
 func indexHandler(
-	srvFs fs.FS,
 	htmlFile string,
 ) http.HandlerFunc {
 	liveReloadScriptBytes, err := fs.ReadFile(assetsFs, "assets/live-reload.js")
@@ -36,7 +36,7 @@ func indexHandler(
 			)
 			return
 		}
-		content, err := fs.ReadFile(srvFs, htmlFile)
+		content, err := os.ReadFile(htmlFile)
 		if err != nil {
 			log.Printf("Error reading file: %v\n", err)
 			handleError(

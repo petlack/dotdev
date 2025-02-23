@@ -2,18 +2,16 @@ package main
 
 import (
 	"fmt"
-	"io/fs"
 	"log"
 	"net/http"
 	"time"
 )
 
 func DevServer(
-	srvFs fs.FS,
 	htmlFile string,
 ) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", indexHandler(srvFs, htmlFile))
+	mux.HandleFunc("/", indexHandler(htmlFile))
 	mux.HandleFunc("/ws", wsHandler)
 	return mux
 }
@@ -25,7 +23,6 @@ func StartFileWatcher(filePath string) {
 func StartDevServer(
 	host string,
 	port int,
-	srvFs fs.FS,
 	htmlFile string,
 ) {
 	go printServerState()
@@ -34,7 +31,7 @@ func StartDevServer(
 	ServerState.Urls = []string{fmt.Sprintf("http://%s:%d", host, port)}
 	notifyStateUpdate()
 	go StartFileWatcher(htmlFile)
-	server := DevServer(srvFs, htmlFile)
+	server := DevServer(htmlFile)
 	addr := fmt.Sprintf("%s:%d", host, port)
 	// log.Printf("Serving %s on http://%s", htmlFile, addr)
 	if err := http.ListenAndServe(addr, server); err != nil {
