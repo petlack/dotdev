@@ -1,5 +1,5 @@
 Name:           dotdev
-Version:        0.0.1.20250223.02
+Version:        0.0.1.20250223.03
 Release:        1%{?dist}
 Summary:        Lightweight Web server for static HTML with built-in live reload written in Go.
 
