@@ -27,7 +27,7 @@ func indexHandler(
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		ServerState.NoRequests += 1
-		notifyStateUpdate()
+		notifyServerStateUpdate()
 		if r.URL.Path != "/" {
 			handleError(
 				w, errorResponseBytes, http.StatusNotFound,
@@ -65,7 +65,7 @@ func indexHandler(
 
 func handleError(w http.ResponseWriter, errorResponseBytes []byte, statusCode int, message string, description string) {
 	ServerState.NoErrors += 1
-	notifyStateUpdate()
+	notifyServerStateUpdate()
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(statusCode)
 	materializedErorrData := strings.ReplaceAll(string(errorResponseBytes), "{{dotdev::error.statusCode}}", fmt.Sprintf("%d", statusCode))

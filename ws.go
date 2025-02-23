@@ -49,7 +49,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	wsMutex.Unlock()
 
 	ServerState.ConnectedClients = len(wsClients)
-	notifyStateUpdate()
+	notifyServerStateUpdate()
 
 	go func() {
 		buf := make([]byte, 1024)
@@ -61,7 +61,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 					if c == conn {
 						wsClients = append(wsClients[:i], wsClients[i+1:]...)
 						ServerState.ConnectedClients = len(wsClients)
-						notifyStateUpdate()
+						notifyServerStateUpdate()
 						break
 					}
 				}

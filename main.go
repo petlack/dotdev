@@ -59,12 +59,13 @@ func main() {
 			defaultHost = DEFAULT_HOST
 		}
 		serveFileParentDir := filepath.Dir(serveFile)
-		ServerState.ServeFsDir = serveFileParentDir
-		notifyStateUpdate()
 		if _, err := os.Stat(serveFile); err != nil {
 			log.Printf("Serve file not found: %s\n", serveFile)
 			log.Fatal(err)
 		}
+		go monitorServerState()
+		ServerState.ServeFsDir = serveFileParentDir
+		notifyServerStateUpdate()
 		configFlagSet := flag.NewFlagSet("dotdev", flag.ContinueOnError)
 		host := configFlagSet.String("host", defaultHost, "Host of the dev server")
 		port := configFlagSet.Int("port", defaultPort, "Port of the dev server")
