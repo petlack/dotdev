@@ -1,5 +1,5 @@
 pkgname=dotdev
-pkgver=0.0.1.20250222.02
+pkgver=0.0.1.20250223.01
 pkgrel=1
 pkgdesc="Command-line tool for managing Time-based One-Time Passwords (TOTPs)"
 arch=('i686' 'x86_64')

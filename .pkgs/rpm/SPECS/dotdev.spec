@@ -1,5 +1,5 @@
 Name:           dotdev
-Version:        0.0.1.20250222.02
+Version:        0.0.1.20250223.01
 Release:        1%{?dist}
 Summary:        Command-line tool for managing Time-based One-Time Passwords (TOTPs)
 
