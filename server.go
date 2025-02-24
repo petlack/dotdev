@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"runtime"
 	"time"
 )
 
@@ -17,7 +18,10 @@ func DevServer(
 }
 
 func StartFileWatcher(filePath string) {
-	watchFileInotify(filePath, Throttle(broadcastReload, 100*time.Millisecond))
+	if runtime.GOOS == "linux" {
+		watchFileInotify(filePath, Throttle(broadcastReload, 100*time.Millisecond))
+	}
+	watchFilePoll(filePath, broadcastReload)
 }
 
 func StartDevServer(
