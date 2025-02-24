@@ -7,11 +7,25 @@
 [![Build RPM Package](https://github.com/petlack/dotdev/actions/workflows/rpm.yml/badge.svg)](https://github.com/petlack/dotdev/actions/workflows/rpm.yml)
 
 # dotdev
+
 🌐 A lightweight Web server for static HTML with live reload for instant updates during development.
 It uses **inotify** for file watching and **WebSocket** for auto reloads.
 Written in Go solely with standard library.
 
 ![Screen recording](screencast.gif)
+
+<!--toc:start-->
+- [dotdev](#dotdev)
+  - [Usage](#usage)
+  - [Command-Line Options](#command-line-options)
+  - [Installation](#installation)
+    - [Alpine](#alpine)
+    - [Arch Linux](#arch-linux)
+    - [Fedora/openSUSE](#fedoraopensuse)
+    - [Ubuntu/Debian](#ubuntudebian)
+    - [macOS](#macos)
+    - [Other](#other)
+<!--toc:end-->
 
 ## Usage
 To run dotdev, provide the HTML file you wish to serve as the first argument.
@@ -84,6 +98,18 @@ Head to the [Releases](https://github.com/petlack/dotdev/releases) section and d
 ```bash
 wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev_0.0.1.20250222.01-1_amd64.deb
 sudo dpkg -i dotdev_0.0.1.20250224.03-1_amd64.deb
+```
+
+### macOS
+Tap the repository and install with:
+```bash
+brew tap petlack/dotdev
+brew install dotdev
+```
+Upgrade later using:
+```bash
+brew update
+brew upgrade dotdev
 ```
 
 ### Other
