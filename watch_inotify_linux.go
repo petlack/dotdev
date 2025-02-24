@@ -46,7 +46,6 @@ func watchFileInotify(filename string, callback func()) {
 			event := (*syscall.InotifyEvent)(unsafe.Pointer(&buf[offset]))
 			// On modification, notify clients.
 			if event.Mask&syscall.IN_MODIFY != 0 {
-				// log.Println("File modified, notifying clients...")
 				callback()
 			}
 			// If the file is moved, its attributes change, or it is deleted, the file watch is no longer valid.

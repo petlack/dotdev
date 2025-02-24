@@ -17,7 +17,6 @@ func watchFilePoll(filename string, callback func()) {
 			modTime := info.ModTime()
 			if modTime.After(lastModTime) {
 				lastModTime = modTime
-				log.Println("File changed, notifying clients...")
 				callback()
 			}
 		}
