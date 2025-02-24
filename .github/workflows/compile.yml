@@ -25,6 +25,14 @@ jobs:
             goos: linux
             goarch: 386
             asset_name: dotdev-linux-i386
+          - os: ubuntu-latest
+            goos: js
+            goarch: wasm
+            asset_name: dotdev-wasm
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            asset_name: dotdev-macos-amd64
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
