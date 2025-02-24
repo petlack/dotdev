@@ -25,6 +25,7 @@ func indexHandler(
 	if err != nil {
 		fmt.Printf("%sError reading error.html. Error page will not work.%s\n", Clr.Red, Clr.Reset)
 	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		ServerState.NoRequests += 1
 		notifyServerStateUpdate()
@@ -36,6 +37,7 @@ func indexHandler(
 			)
 			return
 		}
+
 		content, err := os.ReadFile(htmlFile)
 		if err != nil {
 			log.Printf("Error reading file: %v\n", err)
@@ -46,14 +48,9 @@ func indexHandler(
 			)
 			return
 		}
+
 		htmlContent := string(content)
-
-		snippet := fmt.Sprintf(`<script type="text/javascript">
-    %s
-    </script>`,
-			liveReloadScript,
-		)
-
+		snippet := fmt.Sprintf("<script type=\"text/javascript\">\n%s\n</script>", liveReloadScript)
 		if idx := strings.LastIndex(htmlContent, "</body>"); idx != -1 {
 			htmlContent = htmlContent[:idx] + "\n" + snippet + "\n" + htmlContent[idx:]
 		} else {
