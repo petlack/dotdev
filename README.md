@@ -15,16 +15,15 @@ Written in Go solely with standard library.
 ![Screen recording](screencast.gif)
 
 <!--toc:start-->
-- [dotdev](#dotdev)
-  - [Usage](#usage)
-  - [Command-Line Options](#command-line-options)
-  - [Installation](#installation)
-    - [Alpine](#alpine)
-    - [Arch Linux](#arch-linux)
-    - [Fedora/openSUSE](#fedoraopensuse)
-    - [Ubuntu/Debian](#ubuntudebian)
-    - [macOS](#macos)
-    - [Other](#other)
+- [Usage](#usage)
+- [Command-Line Options](#command-line-options)
+- [Installation](#installation)
+  - [Alpine](#alpine)
+  - [Arch Linux](#arch-linux)
+  - [Fedora/openSUSE](#fedoraopensuse)
+  - [Ubuntu/Debian](#ubuntudebian)
+  - [macOS](#macos)
+  - [Other](#other)
 <!--toc:end-->
 
 ## Usage
