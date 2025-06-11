@@ -1,5 +1,5 @@
 pkgname=dotdev
-pkgver=0.0.1.20250224.03
+pkgver=0.0.1.20250611.01
 pkgrel=1
 pkgdesc="Lightweight Web server for static HTML with built-in live reload written in Go."
 arch=('i686' 'x86_64')

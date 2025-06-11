@@ -56,10 +56,10 @@ Now, whenever you update `index.html` or any linked JavaScript or CSS files, con
 ### Alpine
 Head to the [Releases](https://github.com/petlack/dotdev/releases) section and download the latest apk package and public key.
 ```bash
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev-0.0.1.20250222.01-r1.apk
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev-0.0.1.20250222.01-r1.apk.rsa.pub
-cp dotdev-0.0.1.20250224.03-r1.apk.rsa.pub /etc/apk/keys/
-apk add dotdev-0.0.1.20250224.03-r1.apk
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev-0.0.1.20250222.01-r1.apk
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev-0.0.1.20250222.01-r1.apk.rsa.pub
+cp dotdev-0.0.1.20250611.01-r1.apk.rsa.pub /etc/apk/keys/
+apk add dotdev-0.0.1.20250611.01-r1.apk
 ```
 
 ### Arch Linux
@@ -71,32 +71,32 @@ yay -S dotdev-git
 **Build package from source**
 ```bash
 git clone https://github.com/petlack/dotdev && cd dotdev || return
-tar -czf archlinux/pkgbuild-src/dotdev-0.0.1.20250224.03.tar.gz \
+tar -czf archlinux/pkgbuild-src/dotdev-0.0.1.20250611.01.tar.gz \
     *.go go.mod version.txt
 makepkg --dir archlinux/pkgbuild-src --noconfirm
-sudo pacman -U ./archlinux/pkgbuild-src/dotdev-0.0.1.20250224.03-1-x86_64.pkg.tar.zst
+sudo pacman -U ./archlinux/pkgbuild-src/dotdev-0.0.1.20250611.01-1-x86_64.pkg.tar.zst
 ```
 
 **Install from release**
 
 Head to the [Releases](https://github.com/petlack/dotdev/releases) section and download the latest Arch Linux package.
 ```bash
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev-0.0.1.20250222.01-1-x86_64.pkg.tar.zst
-sudo pacman -U ./dotdev-0.0.1.20250224.03-1-x86_64.pkg.tar.zst
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev-0.0.1.20250222.01-1-x86_64.pkg.tar.zst
+sudo pacman -U ./dotdev-0.0.1.20250611.01-1-x86_64.pkg.tar.zst
 ```
 
 ### Fedora/openSUSE
 Head to the [Releases](https://github.com/petlack/dotdev/releases) section and download the latest **rpm** package.
 ```bash
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev_0.0.1.20250222.01.fc41.x86_64.rpm
-sudo dnf install -y dotdev_0.0.1.20250224.03-1.fc41.x86_64.rpm
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev_0.0.1.20250222.01.fc41.x86_64.rpm
+sudo dnf install -y dotdev_0.0.1.20250611.01-1.fc41.x86_64.rpm
 ```
 
 ### Ubuntu/Debian
 Head to the [Releases](https://github.com/petlack/dotdev/releases) section and download the latest **deb** package.
 ```bash
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev_0.0.1.20250222.01-1_amd64.deb
-sudo dpkg -i dotdev_0.0.1.20250224.03-1_amd64.deb
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev_0.0.1.20250222.01-1_amd64.deb
+sudo dpkg -i dotdev_0.0.1.20250611.01-1_amd64.deb
 ```
 
 ### macOS
@@ -126,6 +126,6 @@ install -m 755 dotdev /usr/local/bin/dotdev
 Head to the [Releases](https://github.com/petlack/dotdev/releases) section and download the latest binary for your architecture.
 Example:
 ```bash
-wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250224.03/dotdev-linux-amd64
+wget https://github.com/petlack/dotdev/releases/download/v0.0.1.20250611.01/dotdev-linux-amd64
 install -m 755 dotdev-linux-amd64 /usr/local/bin/dotdev
 ```

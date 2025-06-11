@@ -1,7 +1,7 @@
 # Contributor: Peter Laca <peter@laca.me>
 # Maintainer: Peter Laca <peter@laca.me>
 pkgname=dotdev
-pkgver=0.0.1.20250224.03
+pkgver=0.0.1.20250611.01
 pkgrel=1
 pkgdesc="Command-line tool for managing Time-based One-Time Passwords (TOTPs)"
 url="https://github.com/petlack/$pkgname"
