@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -12,12 +14,30 @@ func DevServer(
 	htmlFile string,
 ) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", indexHandler(htmlFile))
+	idxHandler := indexHandler(htmlFile)
+	baseDir := filepath.Dir(htmlFile)
+	fileServer := http.FileServer(http.Dir(baseDir))
+
 	mux.HandleFunc("/ws", wsHandler)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			idxHandler(w, r)
+			return
+		}
+		fileServer.ServeHTTP(w, r)
+	})
 	return mux
 }
 
 func StartFileWatcher(filePath string) {
+	lower := strings.ToLower(filePath)
+	if strings.HasSuffix(lower, ".html") || strings.HasSuffix(lower, ".htm") {
+		if assets, err := GetIncludedAssets(filePath); err == nil {
+			for _, a := range assets {
+				go StartFileWatcher(a)
+			}
+		}
+	}
 	if runtime.GOOS == "linux" {
 		watchFileInotify(filePath, Throttle(broadcastReload, 100*time.Millisecond))
 	}

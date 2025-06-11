@@ -85,6 +85,100 @@ func TestLiveReload(t *testing.T) {
 	}
 }
 
+// TestReloadOnAssetChange verifies that modifications to linked JS/CSS files trigger reloads.
+func TestReloadOnAssetChange(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "asset-reload-test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	htmlPath := filepath.Join(tmpDir, "index.html")
+	cssPath := filepath.Join(tmpDir, "style.css")
+	jsPath := filepath.Join(tmpDir, "app.js")
+
+	htmlContent := `<html><head><link rel="stylesheet" href="style.css"><script src="app.js"></script></head><body>Hello</body></html>`
+	os.WriteFile(htmlPath, []byte(htmlContent), 0644)
+	os.WriteFile(cssPath, []byte("body{}"), 0644)
+	os.WriteFile(jsPath, []byte("console.log('hi')"), 0644)
+
+	handler := DevServer(htmlPath)
+	go StartFileWatcher(htmlPath)
+	ts := httptest.NewServer(handler)
+	defer ts.Close()
+
+	u, _ := url.Parse(ts.URL)
+	wsConn := dialWebSocket(t, u.Host)
+	defer wsConn.Close()
+
+	// modify CSS file to trigger reload
+	os.WriteFile(cssPath, []byte("body{color:red}"), 0644)
+	newTime := time.Now().Add(2 * time.Second)
+	os.Chtimes(cssPath, newTime, newTime)
+
+	done := make(chan string, 1)
+	go func() { done <- readWebSocketMessage(t, wsConn) }()
+
+	select {
+	case msg := <-done:
+		if msg != "reload" {
+			t.Fatalf("Expected 'reload' message, got: %q", msg)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("Timed out waiting for reload message")
+	}
+}
+
+// TestServeAssets ensures that referenced CSS and JS files are served correctly.
+func TestServeAssets(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "serve-assets-test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	htmlPath := filepath.Join(tmpDir, "index.html")
+	cssPath := filepath.Join(tmpDir, "style.css")
+	jsPath := filepath.Join(tmpDir, "app.js")
+
+	htmlContent := `<html><head><link rel="stylesheet" href="style.css"><script src="app.js"></script></head><body>Hello</body></html>`
+	os.WriteFile(htmlPath, []byte(htmlContent), 0644)
+	cssData := "body{}"
+	jsData := "console.log('hi')"
+	os.WriteFile(cssPath, []byte(cssData), 0644)
+	os.WriteFile(jsPath, []byte(jsData), 0644)
+
+	handler := DevServer(htmlPath)
+	ts := httptest.NewServer(handler)
+	defer ts.Close()
+
+	resp, err := http.Get(ts.URL + "/style.css")
+	if err != nil {
+		t.Fatalf("GET style.css failed: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("Expected 200 OK, got %d", resp.StatusCode)
+	}
+	body, _ := io.ReadAll(resp.Body)
+	if string(body) != cssData {
+		t.Fatalf("Unexpected CSS content: %q", string(body))
+	}
+
+	resp, err = http.Get(ts.URL + "/app.js")
+	if err != nil {
+		t.Fatalf("GET app.js failed: %v", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("Expected 200 OK for JS, got %d", resp.StatusCode)
+	}
+	body, _ = io.ReadAll(resp.Body)
+	if string(body) != jsData {
+		t.Fatalf("Unexpected JS content: %q", string(body))
+	}
+}
+
 func getHtmlContent(t *testing.T, url string) string {
 	resp, err := http.Get(url)
 	if err != nil {

@@ -9,7 +9,7 @@
 # dotdev
 
 🌐 A lightweight Web server for static HTML with live reload for instant updates during development.
-It uses **inotify** for file watching and **WebSocket** for auto reloads.
+It uses **inotify** for file watching and **WebSocket** for auto reloads. Linked JavaScript and CSS files are also watched for changes.
 Written in Go solely with standard library.
 
 ![Screen recording](screencast.gif)
@@ -43,7 +43,7 @@ The server will output a message similar to:
 ```
 Serving index.html on http://localhost:4774
 ```
-Now, whenever you update `index.html`, connected browsers will automatically reload.
+Now, whenever you update `index.html` or any linked JavaScript or CSS files, connected browsers will automatically reload.
 
 ## Command-Line Options
 * `--host <HOST>`: Specify the host (default to `HOST` environment variable or `127.0.0.1`).
